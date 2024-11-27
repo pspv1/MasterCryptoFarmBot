@@ -32,7 +32,7 @@ Overall, the MasterCryptoFarmBot project is designed to be a comprehensive solut
 
 ## 🔌 Available Modules:
 
-### 🤖 [Hamster Kombat Farm/Claimer Bot](https://github.com/masterking32/MCF_HamsterCombat)
+### 🤖 [Hamster Kombat Farm/Claimer Bot](https://github.com/masterking32/MCF_HamsterKombat)
 
 Module for the Hamster Combat bot. Automatically buys the best cards, completes tasks, plays in the playground, and obtains promo keys.
 
@@ -40,9 +40,17 @@ Module for the Hamster Combat bot. Automatically buys the best cards, completes 
 
 Module for the Blum bot. Automatically registers new accounts, claims daily rewards, starts, finishes, and completes all tasks (including promotions, YouTube, partners, and more), plays games, joins channels, and launches partner bots for tasks, and much more!
 
+### 🤖 [PAWS/Claimer Bot](https://github.com/masterking32/MCF_PAWS)
+
+Module for the PAWS bot. Automatically registers new accounts, claims rewards, and much more!
+
 ### 🤖 [Hrum Farm/Claimer Bot](https://github.com/masterking32/MCF_Hrum)
 
 Module for the Hrum bot. Automatically claims cookies from the farm, collects daily rewards, starts and completes tasks (Join Channel/Start Bot), auto-finishes the Ribble task, auto-finishes the 🥠 rename task, and more!
+
+### 🤖 [Bums Farm/Claimer Bot](https://t.me/bums/app?startapp=ref_Y1r7YLBo)
+
+Module for the Bums bot. Automatically registers new accounts with your referral token, performs taps instantly or in a human-like manner, completes tasks (Video, Join Channel/Bot, Add "📦 Bums" to your account name), claims rewards for friends, gets and uses expeditions, gets and opens daily free boxes, buys PPH (filtered by level profit), buys TAP upgrades, and more.
 
 ### 🤖 [NotPixel Farm/Claimer Bot](https://t.me/notpixel/app?startapp=f95736407)
 
@@ -51,6 +59,10 @@ Module for the NotPixel bot. Automatically registers new accounts with your refe
 ### 🤖 [Seed Farm/Claimer Bot](https://t.me/seed_coin_bot/app?startapp=95736407)
 
 Module for the Seed bot. Automatically registers new accounts with your referral token, claims rewards, starts and completes tasks (Join Channel/Start Bot), hunts automatically, collects daily gifts, catches worms, gets free birds, auto-adds 🌱 to names, and more!
+
+### 🤖 [TimeFarm Farm/Claimer Bot](https://t.me/TimeFarmCryptoBot?start=P0pVlE6x4Rm0bPqo)
+
+Module for the TimeFarm bot. Automatically registers new accounts with your referral token, starts and claims farms, starts and completes tasks (Join Channel/Start Bot), gets daily rewards, auto-stakes, auto-upgrades clocks, and more!
 
 ### 🤖 [Major Farm/Claimer Bot](https://t.me/major/start?startapp=95736407)
 

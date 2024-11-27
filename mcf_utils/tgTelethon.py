@@ -26,6 +26,7 @@ from mcf_utils.utils import (
 )
 from contextlib import asynccontextmanager
 
+import config
 
 @asynccontextmanager
 async def connect_telethon(log, bot_globals, accountName, proxy=None):
@@ -46,6 +47,8 @@ async def connect_telethon(log, bot_globals, accountName, proxy=None):
             bot_globals["mcf_dir"], "telegram_accounts", f"{accountName}.session"
         )
 
+        wait_second = getConfig(config.config, "max_flood_wait", 600)
+
         tgClient = TelegramClient(
             session=file_path,
             api_id=bot_globals["telegram_api_id"],
@@ -53,6 +56,7 @@ async def connect_telethon(log, bot_globals, accountName, proxy=None):
             proxy=telethon_proxy(proxy) if proxy else None,
             auto_reconnect=False,
             device_model="Desktop (MCF-T)",
+            flood_sleep_threshold=wait_second,
         )
 
         isConnected = await tgClient.connect()
@@ -146,15 +150,44 @@ class tgTelethon:
         self.NewStart = False  # Change to True if /start sent to bot
         self.me = None
 
+    async def getBotID(self, tgClient):
+        if self.BotID is None:
+            return None
+
+        try:
+            return await tgClient.get_input_entity(self.BotID)
+        except Exception as e:
+            if "seconds is required (caused by ResolveUsernameRequest)" not in str(e):
+                self.log.error(f"<red>❌ {e}</red>")
+                return None
+
+            try:
+                seconds = (
+                    int(str(e).split("A wait of ")[1].split(" seconds is required")[0])
+                    + 5
+                )
+
+                self.log.info(
+                    f"<yellow>⏳ Waiting for {seconds} seconds due to Telegram (Telethon) rate limit...</yellow>"
+                )
+                await asyncio.sleep(seconds)
+                return await self.getBotID(tgClient)
+            except:
+                self.log.error(f"<red>❌ {e}</red>")
+                return None
+
     async def run(self):
         try:
             self.log.info(f"<green>🤖 Running {self.accountName} account ...</green>")
+
             async with connect_telethon(
                 self.log, self.bot_globals, self.accountName, self.proxy
             ) as tgClient:
                 if tgClient is None:
                     return None
 
+                if self.BotID is not None:
+                    self.BotID = await self.getBotID(tgClient)
                 await self._account_setup(tgClient)
                 return await self._get_web_view_data(tgClient)
         except Exception as e:
@@ -289,7 +322,7 @@ class tgTelethon:
             await self._mute(tgClient, self.BotID)
         except Exception as e:
             self.log.error(
-                f"<red>❌ failed to send start bot for {self.accountName}</red>"
+                f"<red>❌ [TELETHON]: failed to send start bot for {self.accountName}</red>"
             )
         return True
 
@@ -315,6 +348,14 @@ class tgTelethon:
 
     async def _get_web_view_data(self, tgClient=None):
         try:
+            getBotID = await self.getBotID(tgClient)
+            if not getBotID:
+                self.log.info(
+                    f"<yellow>└─ ❌ {self.accountName} session failed to get bot id!</yellow>"
+                )
+                return None
+
+            self.BotID = getBotID.user_id
             app_url = await self._get_bot_app_link(tgClient)
             if not app_url and not self.ShortAppName:
                 self.log.info(
@@ -324,7 +365,7 @@ class tgTelethon:
 
             result = None
             if self.ShortAppName:
-                peer = await tgClient.get_input_entity(self.BotID)
+                peer = getBotID
                 app = InputBotAppShortName(bot_id=peer, short_name=self.ShortAppName)
                 result = await tgClient(
                     functions.messages.RequestAppWebViewRequest(
@@ -332,7 +373,6 @@ class tgTelethon:
                         app=app,
                         platform="android",
                         write_allowed=True,
-                        compact=True,
                         start_param=(
                             str(self.ReferralToken) if self.ReferralToken else "0"
                         ),
@@ -354,13 +394,13 @@ class tgTelethon:
 
             if not result:
                 self.log.info(
-                    f"<yellow>└─ ❌ {self.accountName} session failed to get web view data!</yellow>"
+                    f"<yellow>└─ ❌ {self.accountName} [TELETHON] session failed to get web view data!</yellow>"
                 )
                 return None
 
             if not result.url:
                 self.log.info(
-                    f"<yellow>└─ ❌ {self.accountName} session failed to get web view data!</yellow>"
+                    f"<yellow>└─ ❌ {self.accountName} [TELETHON] session failed to get web view data!</yellow>"
                 )
                 return None
 
@@ -368,7 +408,7 @@ class tgTelethon:
 
         except Exception as e:
             self.log.info(
-                f"<yellow>└─ ❌ {self.accountName} session failed to get web view data!</yellow>"
+                f"<yellow>└─ ❌ {self.accountName} [TELETHON] session failed to get web view data!</yellow>"
             )
             self.log.error(f"<red>❌ {e}</red>")
             return None
