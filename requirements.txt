@@ -8,3 +8,6 @@ psutil
 unidecode
 faker
 telethon
+urllib3
+cloudscraper
+
